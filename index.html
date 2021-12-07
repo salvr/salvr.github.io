@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/ammo.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        var createScene = function () {
+        
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+        
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+        
+            // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+        
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+        
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+        
+            // Default intensity is 1. Let's dim the light a small amount
+            light.intensity = 0.7;
+        
+
+
+            BABYLON.SceneLoader.ImportMesh("","https://models.babylonjs.com/","ExplodingBarrel.glb", scene, function (meshes) {          
+          
+            var barrel = meshes[0];
+                barrel.scaling = new BABYLON.Vector3(.05, .05, .05);
+                barrel.position.z=-10
+                barrel.position.x=-10
+    });
+    
+    BABYLON.SceneLoader.ImportMesh("","https://models.babylonjs.com/Lee-Perry-Smith-Head/","head.glb", scene, function (meshes) {          
+            var victim = meshes[0];
+                victim.scaling = new BABYLON.Vector3(7, 7, 7);
+                victim.position.z=-6
+                victim.position.x=-6
+                
+                
+            
+    });
+
+    // var assetsManager = new BABYLON.AssetsManager(scene);
+	// var spellDiskTask = assetsManager.addMeshTask("spellDiskTask", null, "https://models.babylonjs.com/TrailMeshSpell/", "spellDisk.glb");
+	// var pinkEnergyBallTask = assetsManager.addMeshTask("pinkEnergyBall", null, "https://models.babylonjs.com/TrailMeshSpell/", "pinkEnergyBall.glb");
+	// var greenEnergyBallTask = assetsManager.addMeshTask("greenEnergyBall", null, "https://models.babylonjs.com/TrailMeshSpell/", "greenEnergyBall.glb");
+	// var yellowEnergyBallTask = assetsManager.addMeshTask("yellowEnergyBallTask", null, "https://models.babylonjs.com/TrailMeshSpell/", "yellowEnergyBall.glb");
+	
+	// spellDiskTask.onSuccess = function (task) {
+    //     task.loadedMeshes.forEach(function(mesh){
+    //         if(mesh.name == "__root__"){
+    //             mesh.name = "__spellDisk_root__";
+    //             mesh.scaling.scaleInPlace(10);
+    //         }
+    //     });
+	// }
+	// pinkEnergyBallTask.onSuccess = function (task) {
+    //     task.loadedMeshes.forEach(function(mesh){ if(mesh.name == "__root__") mesh.name = "__pinkEnergyBall_root__"; });
+	// }
+	// greenEnergyBallTask.onSuccess = function (task) {
+    //     task.loadedMeshes.forEach(function(mesh){
+    //         if(mesh.name == "__root__"){
+    //             mesh.name = "__greenEnergyBall_root__";
+    //             mesh.position.y = 36;
+    //         }
+    //     });
+	// }
+	// yellowEnergyBallTask.onSuccess = function (task) {
+    //     task.loadedMeshes.forEach(function(mesh){
+    //         if(mesh.name == "__root__"){
+    //             mesh.name = "__yellowEnergyBall_root__";
+    //             mesh.position.y = -24;
+    //         }
+    //     });
+	// }
+	
+	// assetsManager.onFinish = function (tasks) {
+    //     scene.createDefaultCameraOrLight(true, true, true);
+    //     scene.createDefaultEnvironment();
+	// 	engine.runRenderLoop(function () {
+	// 		scene.render();
+	// 	});
+	// };
+	
+	// assetsManager.load();
+
+
+            // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+            var sphere1 = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+            var sphere2 = BABYLON.Mesh.CreateSphere("sphere2", 12, 2, scene);
+            var sphere3 = BABYLON.Mesh.CreateSphere("sphere3", 12, 2, scene);
+            var sphere4 = BABYLON.Mesh.CreateSphere("sphere4", 12, 2, scene);
+            var sphere5 = BABYLON.Mesh.CreateSphere("sphere5", 12, .5, scene);
+
+            // Move the sphere upward 1/2 its height
+            sphere1.position.y = 1;
+            sphere2.position.y = 1;
+            sphere2.position.x = 3;
+            sphere3.position.y = 1;
+            sphere3.position.x = -3;
+            sphere4.position.y = 5;
+            sphere4.position.x = -3;
+            sphere5.position.y = 4;
+            sphere5.position.x = 4;
+            sphere5.position.z = -7;
+            
+
+
+            // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+            var ground = BABYLON.Mesh.CreateGround("ground1", 12, 12, 2, scene);
+        
+            // GUI
+            var plane1 = BABYLON.Mesh.CreatePlane("plane", 2);
+            plane1.parent = sphere1;
+            plane1.position.y = 2;
+            
+            var plane2 = BABYLON.Mesh.CreatePlane("plane", 2);
+            plane2.parent = sphere2;
+            plane2.position.y = 2;
+            
+            var plane3 = BABYLON.Mesh.CreatePlane("plane", 2);
+            plane3.parent = sphere3;
+            plane3.position.y = 2;
+            
+            var plane4 = BABYLON.Mesh.CreatePlane("plane", 2);
+            plane4.parent = sphere4;
+            plane4.position.y = 2;
+
+            var plane5 = BABYLON.Mesh.CreatePlane("plane", 2);
+            plane5.parent = sphere5;
+            plane5.position.y = 1;
+            plane5.rotation.y = 90;
+
+
+
+            var advancedTexture1 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane1);
+        
+            var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "CO");
+            button1.width = 3;
+            button1.height = 0.5;
+            button1.color = "white";
+            button1.fontSize = 50;
+            button1.background = "orange";
+            button1.onPointerUpObservable.add(function() {
+                alert("Carbon Monoxide is an oderlass gas that can cause nausea!");
+            });
+            advancedTexture1.addControl(button1);
+
+
+
+            var advancedTexture2 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane2);
+
+            var button2 = BABYLON.GUI.Button.CreateSimpleButton("but2", "Ammonia");
+            button2.width = 2;
+            button2.height = 0.5;
+            button2.color = "white";
+            button2.fontSize = 50;
+            button2.background = "green";
+            button2.onPointerUpObservable.add(function() {
+                alert("Ammonia is a colourless gas with a distinct pungent smell ");
+            });
+            advancedTexture2.addControl(button2);
+            
+        
+            var advancedTexture3 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane3);
+
+            var button3 = BABYLON.GUI.Button.CreateSimpleButton("but3", "Black Mold");
+            button3.width =  2;
+            button3.height = 0.5;
+            button3.color = "white";
+            button3.fontSize = 50;
+            button3.background = "black";
+            button3.onPointerUpObservable.add(function() {
+                alert("Spores from black mold can cause respiratory problems");
+            });
+            advancedTexture3.addControl(button3);
+
+           
+            var advancedTexture4 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane4);
+
+            var button4 = BABYLON.GUI.Button.CreateSimpleButton("but4", "Bleach");
+            button4.width = 2;
+            button4.height = 0.5;
+            button4.color = "black";
+            button4.fontSize = 50;
+            button4.background = "white";
+            button4.onPointerUpObservable.add(function() {
+                alert("When mixed with certain other chemicals, bleach can produce toxic gases which can cause respiratory issues.");
+            });
+            advancedTexture4.addControl(button4);
+
+//end sphere tutorial
+
+
+
+
+
+
+    var advancedTexture5 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane5);
+
+    var panel = new BABYLON.GUI.StackPanel();
+    advancedTexture5.addControl(panel);
+
+    var textblock = new BABYLON.GUI.TextBlock();
+    textblock.height = "250px";
+    panel.addControl(textblock);   
+
+    var addRadio = function(text, parent) {
+
+        var button = new BABYLON.GUI.RadioButton();
+        button.width = "60px";
+        button.height = "60px";
+        button.color = "white";
+        button.background = "green";     
+
+        button.onIsCheckedChangedObservable.add(function(state) {
+            if (state) {
+                textblock.text = "You selected " + text;
+            }
+        }); 
+
+        var header = BABYLON.GUI.Control.AddHeader(button, text, "200px", { isHorizontal: true, controlFirst: true });
+        header.height = "130px";
+
+        parent.addControl(header);    
+    }
+
+
+    addRadio("Ammonia", panel);
+    addRadio("Bleach", panel);
+    addRadio("Black Mold", panel);
+    addRadio("Carbon Monoxide", panel);
+
+
+
+
+
+
+
+
+            return scene;
+        
+        };
+                window.initFunction = async function() {
+                    
+                    
+                    var asyncEngineCreation = async function() {
+                        try {
+                        return createDefaultEngine();
+                        } catch(e) {
+                        console.log("the available createEngine function failed. Creating the default engine instead");
+                        return createDefaultEngine();
+                        }
+                    }
+
+                    window.engine = await asyncEngineCreation();
+        if (!engine) throw 'engine should not be null.';
+        window.scene = createScene();};
+        initFunction().then(() => {sceneToRender = scene        
+            engine.runRenderLoop(function () {
+                if (sceneToRender && sceneToRender.activeCamera) {
+                    sceneToRender.render();
+                }
+            });
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
